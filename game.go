@@ -4,7 +4,7 @@ package main
 type Board [][]int
 
 // Player - player struct
-type Player struct{}
+type Player struct{} // TODO - interface with events?
 
 // Grid struct
 type Grid struct {
@@ -63,6 +63,7 @@ func (b Board) addShip(s *Ship) {
 
 // check point is a ship
 func (s *Ship) contains(g Grid) bool {
+	// TODO
 	if g.X == s.First.X {
 
 	} else if g.Y == s.First.Y {
@@ -97,7 +98,7 @@ func (s *Ship) hit(g Grid) (hit, snk bool) {
 }
 
 func (b Board) printBoard() string {
-
+	// TODO - print out the board state
 	return ""
 }
 
@@ -116,6 +117,8 @@ func validateShips(ships []*Ship) (valid bool) {
 		if ship.First.X > ship.Last.X || ship.First.Y > ship.Last.Y {
 			return
 		}
+
+		//TODO - check ship inside board
 
 		board.addShip(ship)
 	}
@@ -161,4 +164,6 @@ func newGame(p1, p2 Player) *Observer {
 func (o *Observer) run() {
 	o.p1.setupShips()
 	o.p2.setupShips()
+
+	//TODO - simulate hits
 }
