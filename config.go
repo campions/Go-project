@@ -1,8 +1,14 @@
 package main
 
 const (
-	gridRows = 15
-	gridCols = 15
+	// GridSize size
+	GridSize = 10
+	// ShipHit ship hit
+	ShipHit = iota
+	// ShipPresent - grid has ship
+	ShipPresent = iota
+	// ShipCount - number of ships
+	ShipCount = 5
 )
 
 var (
