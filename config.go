@@ -12,5 +12,5 @@ const (
 )
 
 var (
-	ships []int = []int{3, 2, 1}
+	expectSize = []uint{5, 4, 3, 3, 2}
 )

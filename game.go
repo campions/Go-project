@@ -106,7 +106,6 @@ func validateShips(ships []*Ship) (valid bool) {
 		return
 	}
 
-	expectSize := []uint{5, 4, 3, 3, 2}
 	board := newBoard()
 
 	for i, ship := range ships {
@@ -127,7 +126,6 @@ func validateShips(ships []*Ship) (valid bool) {
 // setup game ships
 func (g *Game) setupShips() {
 	var ships []*Ship
-	expectSize := []uint{5, 4, 3, 3, 2}
 	for _, size := range expectSize {
 		ships = append(ships, &Ship{
 			Size: size,
