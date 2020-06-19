@@ -118,7 +118,12 @@ func validateShips(ships []*Ship) (valid bool) {
 			return
 		}
 
-		//TODO - check ship inside board
+		if ship.First.X < 0 || ship.First.Y < 0 {
+			return false
+		}
+		if ship.Last.X >= 10 || ship.Last.Y >= 10 {
+			return false
+		}
 
 		board.addShip(ship)
 	}
