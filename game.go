@@ -1,5 +1,15 @@
 package main
 
+import "bytes"
+
+// Items on the board
+const (
+	WATER = iota
+	MISS
+	HIT
+	SHIP
+)
+
 // Board - game board
 type Board [][]int
 
@@ -98,8 +108,26 @@ func (s *Ship) hit(g Grid) (hit, snk bool) {
 }
 
 func (b Board) printBoard() string {
-	// TODO - print out the board state
-	return ""
+	var buf bytes.Buffer
+
+	for _, r := range b {
+		for _, c := range r {
+			switch c {
+			case WATER:
+				buf.WriteRune('W')
+			case MISS:
+				buf.WriteRune('M')
+			case HIT:
+				buf.WriteRune('H')
+			case SHIP:
+				buf.WriteRune('S')
+			}
+			buf.WriteRune(' ')
+		}
+		buf.WriteRune('\n')
+	}
+
+	return buf.String()
 }
 
 func validateShips(ships []*Ship) (valid bool) {
