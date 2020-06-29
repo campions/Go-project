@@ -73,11 +73,14 @@ func (b Board) addShip(s *Ship) {
 
 // check point is a ship
 func (s *Ship) contains(g Grid) bool {
-	// TODO
 	if g.X == s.First.X {
-
+		if g.Y >= s.First.Y && g.Y <= s.Last.Y {
+			return true
+		}
 	} else if g.Y == s.First.Y {
-
+		if g.X >= s.First.X && g.X <= s.Last.X {
+			return true
+		}
 	}
 
 	return false
