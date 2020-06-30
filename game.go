@@ -133,20 +133,20 @@ func (b Board) printBoard() string {
 	return buf.String()
 }
 
-func validateShips(ships []*Ship) (valid bool) {
+func validateShips(ships []*Ship) bool {
 	if len(ships) != ShipCount {
-		return
+		return false
 	}
 
 	board := newBoard()
 
 	for i, ship := range ships {
 		if ship.Size != expectSize[i] {
-			return
+			return false
 		}
 
 		if ship.First.X > ship.Last.X || ship.First.Y > ship.Last.Y {
-			return
+			return false
 		}
 
 		if ship.First.X < 0 || ship.First.Y < 0 {
@@ -159,7 +159,19 @@ func validateShips(ships []*Ship) (valid bool) {
 		board.addShip(ship)
 	}
 
-	return valid
+	var squareCount uint
+	for _, column := range board {
+		for _, row := range column {
+			if row == SHIP {
+				squareCount++
+			}
+		}
+	}
+	if squareCount != MaxSquareCount {
+		return false
+	}
+
+	return true
 }
 
 // setup game ships

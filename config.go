@@ -9,6 +9,8 @@ const (
 	ShipPresent = iota
 	// ShipCount - number of ships
 	ShipCount = 5
+	//Max square to cover by ships
+	MaxSquareCount = 17
 )
 
 var (
