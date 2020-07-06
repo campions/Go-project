@@ -118,10 +118,6 @@ func (b Board) printBoard() string {
 			switch c {
 			case WATER:
 				buf.WriteRune('W')
-			case MISS:
-				buf.WriteRune('M')
-			case HIT:
-				buf.WriteRune('H')
 			case SHIP:
 				buf.WriteRune('S')
 			}
@@ -209,6 +205,8 @@ func newGame(p1, p2 Player) *Observer {
 	}
 }
 
+//TODO: read ships and print board by Georgiana
+//TODO: shot the canon  by Marian
 func (o *Observer) run() {
 	o.p1.setupShips()
 	o.p2.setupShips()
