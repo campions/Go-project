@@ -1,11 +1,17 @@
 package main
 
-import "bytes"
+import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
 
 // Items on the board
 const (
 	WATER = iota
-	MISS
 	HIT
 	SHIP
 )
@@ -13,8 +19,6 @@ const (
 // Board - game board
 type Board [][]int
 
-// Player - player struct
-type Player struct{} // TODO - interface with events?
 
 // Grid struct
 type Grid struct {
@@ -62,7 +66,7 @@ func newBoard() (b Board) {
 func (b Board) addShip(s *Ship) {
 	if s.First.X == s.Last.X {
 		for i := s.First.Y; i <= s.Last.Y; i++ {
-			b[s.First.X][i] = ShipPresent
+			b[i][s.First.X] = ShipPresent
 		}
 	} else {
 		for i := s.First.X; i <= s.Last.X; i++ {
@@ -117,9 +121,9 @@ func (b Board) printBoard() string {
 		for _, c := range r {
 			switch c {
 			case WATER:
-				buf.WriteRune('W')
+				buf.WriteRune('0')
 			case SHIP:
-				buf.WriteRune('S')
+				buf.WriteRune('X')
 			}
 			buf.WriteRune(' ')
 		}
@@ -204,14 +208,51 @@ func newGame(p1, p2 Player) *Observer {
 		},
 	}
 }
+func getCell(first string) (int, int) {
+	first = strings.TrimSpace(first)
+	param := strings.Fields(first)
+	x, _ := strconv.Atoi(param[0])
+	y, _ := strconv.Atoi(param[1])
+	return x, y
+}
+
+func readShips(p Player) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Let`s add the ships for ", p.name)
+	for j := 4; j >= 1; j-- {
+		//we start with ship with 4 cells
+		for k := 5 - j; k >= 1; k-- {
+			if j!=1 {
+				fmt.Print("Ship with ", j, " cells, please add first cell: ")
+				first, _ := reader.ReadString('\n')
+				a, b := getCell(first)
+
+				fmt.Print("Ship with ", j, " cells, please add last cell: ")
+				last, _ := reader.ReadString('\n')
+				c, d := getCell(last)
+
+				p.board.addShip(&Ship{Grid{a, b}, Grid{c, d}, uint(j), nil, false})
+			} else {
+				fmt.Print("Ship with ", j, " cell, please add the cell: ")
+				first, _ := reader.ReadString('\n')
+				x, y := getCell(first)
+				p.board.addShip(&Ship{Grid{x, y}, Grid{x, y}, uint(j), nil, false})
+			}
+		}
+	}
+}
 
 //TODO: read ships and print board by Georgiana
 //TODO: shot the canon  by Marian
 func (o *Observer) run() {
-	o.p1.setupShips()
-	o.p2.setupShips()
+	//o.p1.setupShips()
+	//o.p2.setupShips()
+	readShips(o.p1.Player)
+	//readShips(o.p2.Player)
 
-	// run the game
+	fmt.Println(o.p1.Player.board.printBoard())
+
+	/*// run the game
 	var cannonBall Grid
 	var response int
 	var sunk *Ship
@@ -245,5 +286,5 @@ func (o *Observer) run() {
 			o.p2.Win()
 			//print player 2 is the winner
 		}
-	}
+	}*/
 }
