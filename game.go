@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -18,7 +19,6 @@ const (
 
 // Board - game board
 type Board [][]int
-
 
 // Grid struct
 type Grid struct {
@@ -63,15 +63,59 @@ func newBoard() (b Board) {
 }
 
 // set grid to ShipPresent
-func (b Board) addShip(s *Ship) {
-	if s.First.X == s.Last.X {
-		for i := s.First.Y; i <= s.Last.Y; i++ {
-			b[i][s.First.X] = ShipPresent
+func (b Board) addShip(s *Ship) (added bool) {
+	if validateShipCoordinates(s) {
+		if s.First.X == s.Last.X {
+			//check if it`s any ship on top
+			if s.First.Y != 0 && b[s.First.Y-1][s.First.X] == ShipPresent {
+				return false
+			}
+			//check if it's any ship on bottom
+			if s.Last.Y != 9 && b[s.Last.Y+1][s.Last.X] == ShipPresent {
+				return false
+			}
+
+			for i := s.First.Y; i <= s.Last.Y; i++ {
+				if s.First.X != 0 && b[i][s.First.X-1] == ShipPresent {
+					return false
+				}
+				if s.First.X != 9 && b[i][s.First.X+1] == ShipPresent {
+					return false
+				}
+				if b[i][s.First.X] == ShipPresent {
+					return false
+				}
+				b[i][s.First.X] = ShipPresent
+
+			}
+			return true
+		} else {
+			//LEFT
+			if s.First.X != 0 && b[s.First.Y][s.First.X-1] == ShipPresent {
+				return false
+			}
+			//RIGHT
+			if s.Last.X != 9 && b[s.Last.Y][s.Last.X+1] == ShipPresent {
+				return false
+			}
+
+			for i := s.First.X; i <= s.Last.X; i++ {
+				if s.First.Y != 0 && b[s.First.Y-1][i] == ShipPresent {
+					return false
+				}
+				if s.First.Y != 9 && b[s.First.Y+1][i] == ShipPresent {
+					return false
+				}
+				if b[s.First.Y][i] == ShipPresent {
+					return false
+				}
+				b[s.First.Y][i] = ShipPresent
+			}
+			return true
+
 		}
 	} else {
-		for i := s.First.X; i <= s.Last.X; i++ {
-			b[s.First.Y][i] = ShipPresent
-		}
+		return false
 	}
 }
 
@@ -174,6 +218,25 @@ func validateShips(ships []*Ship) bool {
 	return true
 }
 
+func validateShipCoordinates(ship *Ship) bool {
+
+	if ship.First.X > ship.Last.X || ship.First.Y > ship.Last.Y {
+		return false
+	}
+
+	if ship.First.X < 0 || ship.First.Y < 0 {
+		return false
+	}
+	if ship.Last.X >= 10 || ship.Last.Y >= 10 {
+		return false
+	}
+	if ship.First.X != ship.Last.X && ship.First.Y != ship.Last.Y {
+		return false
+	}
+
+	return true
+}
+
 // setup game ships
 func (g *Game) setupShips() {
 	var ships []*Ship
@@ -222,7 +285,7 @@ func readShips(p Player) {
 	for j := 4; j >= 1; j-- {
 		//we start with ship with 4 cells
 		for k := 5 - j; k >= 1; k-- {
-			if j!=1 {
+			if j != 1 {
 				fmt.Print("Ship with ", j, " cells, please add first cell: ")
 				first, _ := reader.ReadString('\n')
 				a, b := getCell(first)
@@ -231,12 +294,18 @@ func readShips(p Player) {
 				last, _ := reader.ReadString('\n')
 				c, d := getCell(last)
 
-				p.board.addShip(&Ship{Grid{a, b}, Grid{c, d}, uint(j), nil, false})
+				isAdded := p.board.addShip(&Ship{Grid{a, b}, Grid{c, d}, uint(j), nil, false})
+				if !isAdded {
+					log.Fatal("invalid ship")
+				}
 			} else {
 				fmt.Print("Ship with ", j, " cell, please add the cell: ")
 				first, _ := reader.ReadString('\n')
 				x, y := getCell(first)
-				p.board.addShip(&Ship{Grid{x, y}, Grid{x, y}, uint(j), nil, false})
+				isAdded := p.board.addShip(&Ship{Grid{x, y}, Grid{x, y}, uint(j), nil, false})
+				if !isAdded {
+					log.Fatal("invalid ship")
+				}
 			}
 		}
 	}
@@ -249,7 +318,6 @@ func (o *Observer) run() {
 	//o.p2.setupShips()
 	readShips(o.p1.Player)
 	//readShips(o.p2.Player)
-
 	fmt.Println(o.p1.Player.board.printBoard())
 
 	/*// run the game
