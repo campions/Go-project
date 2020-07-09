@@ -215,38 +215,38 @@ func readShips(p Player) {
 	for j := 4; j >= 3; j-- {
 		//we start with ship with 4 cells
 		for k := 5 - j; k >= 1; k-- {
-		no++
-		if j != 1 {
-			fmt.Print("Ship number: ", no, " with ", j, " cells, please add first cell: ")
-			first, _ := reader.ReadString('\n')
-			a, b := convertStringCoordinatesToInt(first)
+			no++
+			if j != 1 {
+				fmt.Print("Ship number: ", no, " with ", j, " cells, please add first cell: ")
+				first, _ := reader.ReadString('\n')
+				a, b := convertStringCoordinatesToInt(first)
 
-			if a < 0 || b < 0 {
-				log.Fatal("invalid ship")
-			}
+				if a < 0 || b < 0 {
+					log.Fatal("invalid ship")
+				}
 
-			fmt.Print("Ship number: ", no, " with ", j, " cells, please add last cell: ")
-			last, _ := reader.ReadString('\n')
-			c, d := convertStringCoordinatesToInt(last)
-			if c < 0 || d < 0 {
-				log.Fatal("invalid ship")
+				fmt.Print("Ship number: ", no, " with ", j, " cells, please add last cell: ")
+				last, _ := reader.ReadString('\n')
+				c, d := convertStringCoordinatesToInt(last)
+				if c < 0 || d < 0 {
+					log.Fatal("invalid ship")
+				}
+				isAdded := p.board.addShip(&Ship{Grid{a, b}, Grid{c, d}, uint(j), nil, false})
+				if !isAdded {
+					log.Fatal("invalid ship")
+				}
+			} else {
+				fmt.Print("Ship number: ", no, " with ", j, " cell, please add the cell: ")
+				first, _ := reader.ReadString('\n')
+				x, y := convertStringCoordinatesToInt(first)
+				if x < 0 || y < 0 {
+					log.Fatal("invalid ship")
+				}
+				isAdded := p.board.addShip(&Ship{Grid{x, y}, Grid{x, y}, uint(j), nil, false})
+				if !isAdded {
+					log.Fatal("invalid ship")
+				}
 			}
-			isAdded := p.board.addShip(&Ship{Grid{a, b}, Grid{c, d}, uint(j), nil, false})
-			if !isAdded {
-				log.Fatal("invalid ship")
-			}
-		} else {
-			fmt.Print("Ship number: ", no, " with ", j, " cell, please add the cell: ")
-			first, _ := reader.ReadString('\n')
-			x, y := convertStringCoordinatesToInt(first)
-			if x < 0 || y < 0 {
-				log.Fatal("invalid ship")
-			}
-			isAdded := p.board.addShip(&Ship{Grid{x, y}, Grid{x, y}, uint(j), nil, false})
-			if !isAdded {
-				log.Fatal("invalid ship")
-			}
-		}
 		}
 	}
 }
@@ -257,16 +257,24 @@ func (o *Observer) run() {
 
 	// read ships
 	readShips(o.p1.Player)
-	//readShips(o.p2.Player)
+	readShips(o.p2.Player)
 
 	// print player board
-	printPlayerBoard(o.p1.Player)
-	//printPlayerBoard(o.p2.Player)
+	printPlayerBoard(o.p1.Player, false)
+	printPlayerBoard(o.p2.Player, false)
 
 	// white true - start firing
 	for {
 		x, y := o.p1.Player.fireRocket()
-		checkIfHitOrMiss(o.p2.Player.board, x, y)
+		status := checkIfHitOrMiss(o.p2.Player.board, x, y)
+		if status == "hit" {
+			o.p1.Player.enemyBoard[x][y] = HIT
+			printPlayerBoard(o.p1.Player, true)
+			o.p1.Player.incrementScore()
+		} else {
+			o.p1.Player.enemyBoard[x][y] = MISS
+			printPlayerBoard(o.p1.Player, true)
+		}
 
 		//o.p2.Player.fireRocket()
 
