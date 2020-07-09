@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"log"
 	"os"
@@ -16,9 +15,6 @@ const (
 	HIT
 	SHIP
 )
-
-// Board - game board
-type Board [][]int
 
 // Grid struct
 type Grid struct {
@@ -62,63 +58,6 @@ func newBoard() (b Board) {
 	return
 }
 
-// set grid to ShipPresent
-func (b Board) addShip(s *Ship) (added bool) {
-	if validateShipCoordinates(s) {
-		if s.First.X == s.Last.X {
-			//check if it`s any ship on top
-			if s.First.Y != 0 && b[s.First.Y-1][s.First.X] == ShipPresent {
-				return false
-			}
-			//check if it's any ship on bottom
-			if s.Last.Y != 9 && b[s.Last.Y+1][s.Last.X] == ShipPresent {
-				return false
-			}
-
-			for i := s.First.Y; i <= s.Last.Y; i++ {
-				if s.First.X != 0 && b[i][s.First.X-1] == ShipPresent {
-					return false
-				}
-				if s.First.X != 9 && b[i][s.First.X+1] == ShipPresent {
-					return false
-				}
-				if b[i][s.First.X] == ShipPresent {
-					return false
-				}
-				b[i][s.First.X] = ShipPresent
-
-			}
-			return true
-		} else {
-			//LEFT
-			if s.First.X != 0 && b[s.First.Y][s.First.X-1] == ShipPresent {
-				return false
-			}
-			//RIGHT
-			if s.Last.X != 9 && b[s.Last.Y][s.Last.X+1] == ShipPresent {
-				return false
-			}
-
-			for i := s.First.X; i <= s.Last.X; i++ {
-				if s.First.Y != 0 && b[s.First.Y-1][i] == ShipPresent {
-					return false
-				}
-				if s.First.Y != 9 && b[s.First.Y+1][i] == ShipPresent {
-					return false
-				}
-				if b[s.First.Y][i] == ShipPresent {
-					return false
-				}
-				b[s.First.Y][i] = ShipPresent
-			}
-			return true
-
-		}
-	} else {
-		return false
-	}
-}
-
 // check point is a ship
 func (s *Ship) contains(g Grid) bool {
 	if g.X == s.First.X {
@@ -156,25 +95,6 @@ func (s *Ship) hit(g Grid) (hit, snk bool) {
 
 	// hit, still alive
 	return true, false
-}
-
-func (b Board) printBoard() string {
-	var buf bytes.Buffer
-
-	for _, r := range b {
-		for _, c := range r {
-			switch c {
-			case WATER:
-				buf.WriteRune('0')
-			case SHIP:
-				buf.WriteRune('X')
-			}
-			buf.WriteRune(' ')
-		}
-		buf.WriteRune('\n')
-	}
-
-	return buf.String()
 }
 
 func validateShips(ships []*Ship) bool {
@@ -343,39 +263,43 @@ func (o *Observer) run() {
 	//readShips(o.p2.Player)
 	fmt.Println(o.p1.Player.board.printBoard())
 
-	/*// run the game
-	var cannonBall Grid
-	var response int
-	var sunk *Ship
+	/*
+		// run the game
+		var cannonBall Grid
+		var response int
+		var sunk *Ship
+		// read user position - read coordinate
+		// shoot the cannot
+		// handle the cannot
+		// handle the response
+		for {
 
-	for {
+			cannonBall = o.p1.ShotTheCannon()
+			response, sunk = o.p2.HandleTheCannonHit(cannonBall)
+			o.p1.HandleTheResponse(cannonBall, response)
+			if sunk != nil {
+				o.p1.CheckTheShippedSunk(sunk)
+			}
 
-		cannonBall = o.p1.ShotTheCannon()
-		response, sunk = o.p2.HandleTheCannonHit(cannonBall)
-		o.p1.HandleTheResponse(cannonBall, response)
-		if sunk != nil {
-			o.p1.CheckTheShippedSunk(sunk)
-		}
+			o.OnChange(o.p1.State, o.p2.State)
 
-		o.OnChange(o.p1.State, o.p2.State)
+			if o.p2.Lost() {
+				o.p1.Win()
+				//print player 1 is the winner
+			}
 
-		if o.p2.Lost() {
-			o.p1.Win()
-			//print player 1 is the winner
-		}
+			cannonBall = o.p2.ShotTheCannon()
+			response, sunk = o.p1.HandleTheCannonHit(cannonBall)
+			o.p2.HandleTheResponse(cannonBall, response)
+			if sunk != nil {
+				o.p2.CheckTheShippedSunk(sunk)
+			}
 
-		cannonBall = o.p2.ShotTheCannon()
-		response, sunk = o.p1.HandleTheCannonHit(cannonBall)
-		o.p2.HandleTheResponse(cannonBall, response)
-		if sunk != nil {
-			o.p2.CheckTheShippedSunk(sunk)
-		}
+			o.OnChange(o.p1.State, o.p2.State)
 
-		o.OnChange(o.p1.State, o.p2.State)
-
-		if o.p1.Lost() {
-			o.p2.Win()
-			//print player 2 is the winner
-		}
-	}*/
+			if o.p1.Lost() {
+				o.p2.Win()
+				//print player 2 is the winner
+			}
+		}*/
 }
