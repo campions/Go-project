@@ -9,12 +9,6 @@ import (
 	"strings"
 )
 
-// Items on the board
-const (
-	WATER = iota
-	HIT
-	SHIP
-)
 
 // Grid struct
 type Grid struct {
@@ -253,45 +247,47 @@ func (o *Observer) run() {
 	//o.p2.setupShips()
 	readShips(o.p1.Player)
 	//readShips(o.p2.Player)
-	fmt.Println(o.p1.Player.board.printBoard())
+
+	printPlayerBoard(o.p1.Player)
+	//printPlayerBoard(o.p2.Player)
 
 	/*
-		// run the game
-		var cannonBall Grid
-		var response int
-		var sunk *Ship
-		// read user position - read coordinate
-		// shoot the cannot
-		// handle the cannot
-		// handle the response
-		for {
+	// run the game
+	var cannonBall Grid
+	var response int
+	var sunk *Ship
+	// read user position - read coordinate
+	// shoot the cannot
+	// handle the cannot
+	// handle the response
+	for {
 
-			cannonBall = o.p1.ShotTheCannon()
-			response, sunk = o.p2.HandleTheCannonHit(cannonBall)
-			o.p1.HandleTheResponse(cannonBall, response)
-			if sunk != nil {
-				o.p1.CheckTheShippedSunk(sunk)
-			}
+		cannonBall = o.p1.ShotTheCannon()
+		response, sunk = o.p2.HandleTheCannonHit(cannonBall)
+		o.p1.HandleTheResponse(cannonBall, response)
+		if sunk != nil {
+			o.p1.CheckTheShippedSunk(sunk)
+		}
 
-			o.OnChange(o.p1.State, o.p2.State)
+		o.OnChange(o.p1.State, o.p2.State)
 
-			if o.p2.Lost() {
-				o.p1.Win()
-				//print player 1 is the winner
-			}
+		if o.p2.Lost() {
+			o.p1.Win()
+			//print player 1 is the winner
+		}
 
-			cannonBall = o.p2.ShotTheCannon()
-			response, sunk = o.p1.HandleTheCannonHit(cannonBall)
-			o.p2.HandleTheResponse(cannonBall, response)
-			if sunk != nil {
-				o.p2.CheckTheShippedSunk(sunk)
-			}
+		cannonBall = o.p2.ShotTheCannon()
+		response, sunk = o.p1.HandleTheCannonHit(cannonBall)
+		o.p2.HandleTheResponse(cannonBall, response)
+		if sunk != nil {
+			o.p2.CheckTheShippedSunk(sunk)
+		}
 
-			o.OnChange(o.p1.State, o.p2.State)
+		o.OnChange(o.p1.State, o.p2.State)
 
-			if o.p1.Lost() {
-				o.p2.Win()
-				//print player 2 is the winner
-			}
-		}*/
+		if o.p1.Lost() {
+			o.p2.Win()
+			//print player 2 is the winner
+		}
+	}*/
 }
