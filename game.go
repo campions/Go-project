@@ -209,7 +209,8 @@ func readShips(p Player) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Let`s add the ships for ", p.name)
 	no := 0
-	for j := 4; j >= 1; j-- {
+	// j>=1 to read 10 ships, as in the game
+	for j := 4; j >= 3; j-- {
 		//we start with ship with 4 cells
 		for k := 5 - j; k >= 1; k-- {
 			no++
@@ -248,8 +249,6 @@ func readShips(p Player) {
 	}
 }
 
-//TODO: read ships and print board by Georgiana
-//TODO: shot the canon  by Marian
 func (o *Observer) run() {
 	//o.p1.setupShips()
 	//o.p2.setupShips()
