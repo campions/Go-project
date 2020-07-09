@@ -29,6 +29,8 @@ type Game struct {
 	Ships  []*Ship
 	Player Player
 	State  GameState
+	MaxScore int
+	CurrentMaxScore int
 }
 
 // GameState - state struct
@@ -191,7 +193,7 @@ func newGame(p1, p2 Player) *Observer {
 		},
 	}
 }
-func getCell(first string) (int, int) {
+func convertStringCoordinatesToInt(first string) (int, int) {
 	first = strings.TrimSpace(first)
 	param := strings.Fields(first)
 	if len(param) != 2 {
@@ -207,7 +209,7 @@ func getCell(first string) (int, int) {
 
 func readShips(p Player) {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Let`s add the ships for ", p.name)
+	fmt.Println("Let`s add the ships for", p.name)
 	no := 0
 	// j>=1 to read 10 ships, as in the game
 	for j := 4; j >= 3; j-- {
@@ -217,7 +219,7 @@ func readShips(p Player) {
 			if j != 1 {
 				fmt.Print("Ship number: ",no, " with ", j, " cells, please add first cell: ")
 				first, _ := reader.ReadString('\n')
-				a, b := getCell(first)
+				a, b := convertStringCoordinatesToInt(first)
 
 				if a < 0 || b < 0 {
 					log.Fatal("invalid ship")
@@ -225,7 +227,7 @@ func readShips(p Player) {
 
 				fmt.Print("Ship number: ",no, " with ", j, " cells, please add last cell: ")
 				last, _ := reader.ReadString('\n')
-				c, d := getCell(last)
+				c, d := convertStringCoordinatesToInt(last)
 				if c < 0 || d < 0 {
 					log.Fatal("invalid ship")
 				}
@@ -236,7 +238,7 @@ func readShips(p Player) {
 			} else {
 				fmt.Print("Ship number: ",no, " with ", j, " cell, please add the cell: ")
 				first, _ := reader.ReadString('\n')
-				x, y := getCell(first)
+				x, y := convertStringCoordinatesToInt(first)
 				if x < 0 || y < 0 {
 					log.Fatal("invalid ship")
 				}
@@ -252,11 +254,21 @@ func readShips(p Player) {
 func (o *Observer) run() {
 	//o.p1.setupShips()
 	//o.p2.setupShips()
+
+	// read ships
 	readShips(o.p1.Player)
 	//readShips(o.p2.Player)
 
+	// print player board
 	printPlayerBoard(o.p1.Player)
 	//printPlayerBoard(o.p2.Player)
+
+	// white true - start firing
+	for{
+		o.p1.Player.fireRocket()
+		o.p2.Player.fireRocket()
+
+	}
 
 	/*
 	// run the game
