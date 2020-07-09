@@ -1,6 +1,16 @@
 package main
 
-import "bytes"
+import (
+	"bytes"
+)
+
+// Items on the board
+const (
+	WATER = iota
+	HIT
+	SHIP
+	MISS
+)
 
 // Board - game board
 type Board [][]int
@@ -72,6 +82,10 @@ func (b Board) printBoard() string {
 				buf.WriteRune('~')
 			case SHIP:
 				buf.WriteRune('■')
+			case HIT:
+				buf.WriteRune('x')
+			case MISS:
+				buf.WriteRune('o')
 			}
 			buf.WriteRune(' ')
 		}
