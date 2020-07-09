@@ -274,8 +274,14 @@ func newGame(p1, p2 Player) *Observer {
 func getCell(first string) (int, int) {
 	first = strings.TrimSpace(first)
 	param := strings.Fields(first)
-	x, _ := strconv.Atoi(param[0])
-	y, _ := strconv.Atoi(param[1])
+	if len(param) != 2 {
+		return -1, -1
+	}
+	x, err := strconv.Atoi(param[0])
+	y, err1 := strconv.Atoi(param[1])
+	if err != nil || err1 != nil {
+		return -1, -1
+	}
 	return x, y
 }
 
@@ -290,10 +296,16 @@ func readShips(p Player) {
 				first, _ := reader.ReadString('\n')
 				a, b := getCell(first)
 
+				if a < 0 || b < 0 {
+					log.Fatal("invalid ship")
+				}
+
 				fmt.Print("Ship with ", j, " cells, please add last cell: ")
 				last, _ := reader.ReadString('\n')
 				c, d := getCell(last)
-
+				if c < 0 || d < 0 {
+					log.Fatal("invalid ship")
+				}
 				isAdded := p.board.addShip(&Ship{Grid{a, b}, Grid{c, d}, uint(j), nil, false})
 				if !isAdded {
 					log.Fatal("invalid ship")
@@ -302,6 +314,9 @@ func readShips(p Player) {
 				fmt.Print("Ship with ", j, " cell, please add the cell: ")
 				first, _ := reader.ReadString('\n')
 				x, y := getCell(first)
+				if x < 0 || y < 0 {
+					log.Fatal("invalid ship")
+				}
 				isAdded := p.board.addShip(&Ship{Grid{x, y}, Grid{x, y}, uint(j), nil, false})
 				if !isAdded {
 					log.Fatal("invalid ship")
