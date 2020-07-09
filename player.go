@@ -20,7 +20,7 @@ func NewPlayer(name string) Player {
 	return p
 }
 
-func (p Player) fireRocket() {
+func (p Player) fireRocket() (int, int) {
 	// read the coordinates
 	reader := bufio.NewReader(os.Stdin)
 	var x, y int
@@ -40,5 +40,5 @@ func (p Player) fireRocket() {
 	// fire the rocket
 	fmt.Printf("Player "+p.name+": Firing rocket at coordinates (%v, %v)", x, y)
 	fmt.Println("")
-
+	return x, y
 }

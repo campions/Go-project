@@ -9,7 +9,6 @@ import (
 	"strings"
 )
 
-
 // Grid struct
 type Grid struct {
 	X, Y int
@@ -26,10 +25,10 @@ type Ship struct {
 
 // Game - game struct
 type Game struct {
-	Ships  []*Ship
-	Player Player
-	State  GameState
-	MaxScore int
+	Ships           []*Ship
+	Player          Player
+	State           GameState
+	MaxScore        int
 	CurrentMaxScore int
 }
 
@@ -149,10 +148,10 @@ func validateShipCoordinates(ship *Ship) bool {
 	if ship.First.X != ship.Last.X && ship.First.Y != ship.Last.Y {
 		return false
 	}
-	if ship.First.X == ship.Last.X && (uint(ship.Last.Y - ship.First.Y) != ship.Size-1) {
+	if ship.First.X == ship.Last.X && (uint(ship.Last.Y-ship.First.Y) != ship.Size-1) {
 		return false
 	}
-	if ship.First.Y == ship.Last.Y && (uint(ship.Last.X - ship.First.X) != ship.Size-1) {
+	if ship.First.Y == ship.Last.Y && (uint(ship.Last.X-ship.First.X) != ship.Size-1) {
 		return false
 	}
 
@@ -193,6 +192,7 @@ func newGame(p1, p2 Player) *Observer {
 		},
 	}
 }
+
 func convertStringCoordinatesToInt(first string) (int, int) {
 	first = strings.TrimSpace(first)
 	param := strings.Fields(first)
@@ -215,38 +215,38 @@ func readShips(p Player) {
 	for j := 4; j >= 3; j-- {
 		//we start with ship with 4 cells
 		for k := 5 - j; k >= 1; k-- {
-			no++
-			if j != 1 {
-				fmt.Print("Ship number: ",no, " with ", j, " cells, please add first cell: ")
-				first, _ := reader.ReadString('\n')
-				a, b := convertStringCoordinatesToInt(first)
+		no++
+		if j != 1 {
+			fmt.Print("Ship number: ", no, " with ", j, " cells, please add first cell: ")
+			first, _ := reader.ReadString('\n')
+			a, b := convertStringCoordinatesToInt(first)
 
-				if a < 0 || b < 0 {
-					log.Fatal("invalid ship")
-				}
-
-				fmt.Print("Ship number: ",no, " with ", j, " cells, please add last cell: ")
-				last, _ := reader.ReadString('\n')
-				c, d := convertStringCoordinatesToInt(last)
-				if c < 0 || d < 0 {
-					log.Fatal("invalid ship")
-				}
-				isAdded := p.board.addShip(&Ship{Grid{a, b}, Grid{c, d}, uint(j), nil, false})
-				if !isAdded {
-					log.Fatal("invalid ship")
-				}
-			} else {
-				fmt.Print("Ship number: ",no, " with ", j, " cell, please add the cell: ")
-				first, _ := reader.ReadString('\n')
-				x, y := convertStringCoordinatesToInt(first)
-				if x < 0 || y < 0 {
-					log.Fatal("invalid ship")
-				}
-				isAdded := p.board.addShip(&Ship{Grid{x, y}, Grid{x, y}, uint(j), nil, false})
-				if !isAdded {
-					log.Fatal("invalid ship")
-				}
+			if a < 0 || b < 0 {
+				log.Fatal("invalid ship")
 			}
+
+			fmt.Print("Ship number: ", no, " with ", j, " cells, please add last cell: ")
+			last, _ := reader.ReadString('\n')
+			c, d := convertStringCoordinatesToInt(last)
+			if c < 0 || d < 0 {
+				log.Fatal("invalid ship")
+			}
+			isAdded := p.board.addShip(&Ship{Grid{a, b}, Grid{c, d}, uint(j), nil, false})
+			if !isAdded {
+				log.Fatal("invalid ship")
+			}
+		} else {
+			fmt.Print("Ship number: ", no, " with ", j, " cell, please add the cell: ")
+			first, _ := reader.ReadString('\n')
+			x, y := convertStringCoordinatesToInt(first)
+			if x < 0 || y < 0 {
+				log.Fatal("invalid ship")
+			}
+			isAdded := p.board.addShip(&Ship{Grid{x, y}, Grid{x, y}, uint(j), nil, false})
+			if !isAdded {
+				log.Fatal("invalid ship")
+			}
+		}
 		}
 	}
 }
@@ -264,49 +264,51 @@ func (o *Observer) run() {
 	//printPlayerBoard(o.p2.Player)
 
 	// white true - start firing
-	for{
-		o.p1.Player.fireRocket()
-		o.p2.Player.fireRocket()
+	for {
+		x, y := o.p1.Player.fireRocket()
+		checkIfHitOrMiss(o.p2.Player.board, x, y)
+
+		//o.p2.Player.fireRocket()
 
 	}
 
 	/*
-	// run the game
-	var cannonBall Grid
-	var response int
-	var sunk *Ship
-	// read user position - read coordinate
-	// shoot the cannot
-	// handle the cannot
-	// handle the response
-	for {
+		// run the game
+		var cannonBall Grid
+		var response int
+		var sunk *Ship
+		// read user position - read coordinate
+		// shoot the cannot
+		// handle the cannot
+		// handle the response
+		for {
 
-		cannonBall = o.p1.ShotTheCannon()
-		response, sunk = o.p2.HandleTheCannonHit(cannonBall)
-		o.p1.HandleTheResponse(cannonBall, response)
-		if sunk != nil {
-			o.p1.CheckTheShippedSunk(sunk)
-		}
+			cannonBall = o.p1.ShotTheCannon()
+			response, sunk = o.p2.HandleTheCannonHit(cannonBall)
+			o.p1.HandleTheResponse(cannonBall, response)
+			if sunk != nil {
+				o.p1.CheckTheShippedSunk(sunk)
+			}
 
-		o.OnChange(o.p1.State, o.p2.State)
+			o.OnChange(o.p1.State, o.p2.State)
 
-		if o.p2.Lost() {
-			o.p1.Win()
-			//print player 1 is the winner
-		}
+			if o.p2.Lost() {
+				o.p1.Win()
+				//print player 1 is the winner
+			}
 
-		cannonBall = o.p2.ShotTheCannon()
-		response, sunk = o.p1.HandleTheCannonHit(cannonBall)
-		o.p2.HandleTheResponse(cannonBall, response)
-		if sunk != nil {
-			o.p2.CheckTheShippedSunk(sunk)
-		}
+			cannonBall = o.p2.ShotTheCannon()
+			response, sunk = o.p1.HandleTheCannonHit(cannonBall)
+			o.p2.HandleTheResponse(cannonBall, response)
+			if sunk != nil {
+				o.p2.CheckTheShippedSunk(sunk)
+			}
 
-		o.OnChange(o.p1.State, o.p2.State)
+			o.OnChange(o.p1.State, o.p2.State)
 
-		if o.p1.Lost() {
-			o.p2.Win()
-			//print player 2 is the winner
-		}
-	}*/
+			if o.p1.Lost() {
+				o.p2.Win()
+				//print player 2 is the winner
+			}
+		}*/
 }

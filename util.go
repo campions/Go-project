@@ -13,3 +13,7 @@ func validateRocketCoordinates(x int, y int) bool {
 	}
 	return true
 }
+
+func checkIfHitOrMiss(board Board, x int, y int){
+
+}
