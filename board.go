@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"strconv"
 )
 
 // Items on the board
@@ -74,8 +75,26 @@ func (b Board) addShip(s *Ship) (added bool) {
 
 func (b Board) printBoard() string {
 	var buf bytes.Buffer
+	var i = 0
+	var j = 0
+
+	for j = 0; j < 10; j++ {
+		if j == 0 {
+			var b = strconv.Itoa(j)
+			buf.WriteString("   " + b + " ")
+		} else {
+			var b = strconv.Itoa(j)
+			buf.WriteString(b + " ")
+
+		}
+	}
+
+	buf.WriteString("\n")
 
 	for _, r := range b {
+		var a = strconv.Itoa(i) + "| "
+		buf.WriteString(a)
+		i++
 		for _, c := range r {
 			switch c {
 			case WATER:
