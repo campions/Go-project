@@ -14,6 +14,8 @@ type Grid struct {
 	X, Y int
 }
 
+const WINSCORE = 10
+
 // Ship struct
 type Ship struct {
 	First Grid
@@ -174,7 +176,7 @@ func (g *Game) setupShips() {
 	g.Ships = ships
 }
 
-func newGame(p1, p2 Player) *Observer {
+func newGame(p1 Player) *Observer {
 	return &Observer{
 		p1: &Game{
 			Player: p1,
@@ -183,13 +185,13 @@ func newGame(p1, p2 Player) *Observer {
 				EnemyBoard:  newBoard(),
 			},
 		},
-		p2: &Game{
-			Player: p2,
-			State: GameState{
-				PlayerBoard: newBoard(),
-				EnemyBoard:  newBoard(),
-			},
-		},
+		//p2: &Game{
+		//	Player: p2,
+		//	State: GameState{
+		//		PlayerBoard: newBoard(),
+		//		EnemyBoard:  newBoard(),
+		//	},
+		//},
 	}
 }
 
@@ -257,27 +259,32 @@ func (o *Observer) run() {
 
 	// read ships
 	readShips(o.p1.Player)
-	readShips(o.p2.Player)
+	//readShips(o.p2.Player)
 
 	// print player board
 	printPlayerBoard(o.p1.Player, false)
-	printPlayerBoard(o.p2.Player, false)
+	//printPlayerBoard(o.p2.Player, false)
 
 	// white true - start firing
 	for {
+
 		x, y := o.p1.Player.fireRocket()
-		status := checkIfHitOrMiss(o.p2.Player.board, x, y)
+		status := checkIfHitOrMiss(o.p1.Player.board, x, y)
 		if status == "hit" {
-			o.p1.Player.enemyBoard[x][y] = HIT
+			o.p1.Player.enemyBoard[y][x] = HIT
 			printPlayerBoard(o.p1.Player, true)
 			o.p1.Player.incrementScore()
 		} else {
-			o.p1.Player.enemyBoard[x][y] = MISS
+			o.p1.Player.enemyBoard[y][x] = MISS
 			printPlayerBoard(o.p1.Player, true)
 		}
 
-		//o.p2.Player.fireRocket()
+		if o.p1.Player.score == WINSCORE {
+			fmt.Print("Congratulations!! You have won the game!! ")
+			return
+		}
 
+		//o.p2.Player.fireRocket()
 	}
 
 	/*

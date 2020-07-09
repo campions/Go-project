@@ -23,7 +23,7 @@ func validateRocketCoordinates(x int, y int) bool {
 func checkIfHitOrMiss(board Board, x int, y int) string {
 
 	// if hit
-	if board[x][y] == SHIP {
+	if board[y][x] == SHIP {
 		return "hit"
 	} else {
 		return "miss"

@@ -45,7 +45,7 @@ func (p Player) fireRocket() (int, int) {
 	return x, y
 }
 
-func (p Player) incrementScore() {
+func (p *Player) incrementScore() {
 	p.score++
 }
 
