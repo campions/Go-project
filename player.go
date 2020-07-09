@@ -25,7 +25,7 @@ func (p Player) fireRocket() {
 	reader := bufio.NewReader(os.Stdin)
 	var x, y int
 	for {
-		fmt.Print(p.name + " please enter rocket coordinates: ")
+		fmt.Print("\n" + p.name + " please enter rocket coordinates: ")
 		first, _ := reader.ReadString('\n')
 		x, y = convertStringCoordinatesToInt(first)
 
