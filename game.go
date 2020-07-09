@@ -147,6 +147,12 @@ func validateShipCoordinates(ship *Ship) bool {
 	if ship.First.X != ship.Last.X && ship.First.Y != ship.Last.Y {
 		return false
 	}
+	if ship.First.X == ship.Last.X && (uint(ship.Last.Y - ship.First.Y) != ship.Size-1) {
+		return false
+	}
+	if ship.First.Y == ship.Last.Y && (uint(ship.Last.X - ship.First.X) != ship.Size-1) {
+		return false
+	}
 
 	return true
 }
@@ -202,11 +208,13 @@ func getCell(first string) (int, int) {
 func readShips(p Player) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Let`s add the ships for ", p.name)
+	no := 0
 	for j := 4; j >= 1; j-- {
 		//we start with ship with 4 cells
 		for k := 5 - j; k >= 1; k-- {
+			no++
 			if j != 1 {
-				fmt.Print("Ship with ", j, " cells, please add first cell: ")
+				fmt.Print("Ship number: ",no, " with ", j, " cells, please add first cell: ")
 				first, _ := reader.ReadString('\n')
 				a, b := getCell(first)
 
@@ -214,7 +222,7 @@ func readShips(p Player) {
 					log.Fatal("invalid ship")
 				}
 
-				fmt.Print("Ship with ", j, " cells, please add last cell: ")
+				fmt.Print("Ship number: ",no, " with ", j, " cells, please add last cell: ")
 				last, _ := reader.ReadString('\n')
 				c, d := getCell(last)
 				if c < 0 || d < 0 {
@@ -225,7 +233,7 @@ func readShips(p Player) {
 					log.Fatal("invalid ship")
 				}
 			} else {
-				fmt.Print("Ship with ", j, " cell, please add the cell: ")
+				fmt.Print("Ship number: ",no, " with ", j, " cell, please add the cell: ")
 				first, _ := reader.ReadString('\n')
 				x, y := getCell(first)
 				if x < 0 || y < 0 {
