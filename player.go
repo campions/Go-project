@@ -8,15 +8,17 @@ import (
 
 // Player - player struct
 type Player struct {
-	name  string
-	board Board
-	score int
+	name       string
+	board      Board
+	score      int
+	enemyBoard Board
 }
 
 func NewPlayer(name string) Player {
 	var board = newBoard()
+	var enemyBoard = newBoard()
 	var score = 0
-	p := Player{name, board, score}
+	p := Player{name, board, score, enemyBoard}
 	return p
 }
 
@@ -42,3 +44,8 @@ func (p Player) fireRocket() (int, int) {
 	fmt.Println("")
 	return x, y
 }
+
+func (p Player) incrementScore() {
+	p.score++
+}
+
